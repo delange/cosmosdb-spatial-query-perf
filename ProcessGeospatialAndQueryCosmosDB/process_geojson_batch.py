@@ -39,9 +39,14 @@ def split_geojson(in_geojson, out_path, n_features):
 bm = blob_manager(constants.blob_connection_str)
 
 in_geojson = sys.argv[1]
-#in_geojson = 'C:/Users/redelang/OneDrive - Microsoft/Code/projects/CosmosDB/data/input_footprints/Hawaii/Hawaii.geojson'
+#in_geojson = "Alaska.geojson"
 
 temp_path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
-temp_file_geojson = os.path.join(temp_path, Path(in_geojson).stem)
-os.makedirs(temp_file_geojson)
-split_geojson(in_geojson,temp_file_geojson,10000)
+local_file_path = os.path.join(temp_path, Path(in_geojson).stem)
+os.makedirs(local_file_path)
+local_file_path_out = os.path.join(local_file_path, "split")
+os.makedirs(local_file_path_out)
+local_geojson_path = os.path.join(local_file_path, in_geojson)
+
+local_geojson_file = bm.download_file(local_geojson_path, 'footprints', os.path.join("statesunzip_example", in_geojson))
+split_geojson(local_geojson_file,local_file_path_out,10000)
