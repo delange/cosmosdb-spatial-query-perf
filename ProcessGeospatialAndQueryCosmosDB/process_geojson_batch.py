@@ -26,9 +26,6 @@ def split_geojson(in_geojson, out_path, n_features):
     with open(in_geojson) as f:
         data = json.load(f)
 
-    #for i in range(len(trip_id)):
-    #    data['features'][i]['properties']['id'] = trip_id[i]
-
     #A Python dictionary containing properties to be added to each GeoJSON Feature
     properties_dict={
         "State": Path(in_geojson).stem
