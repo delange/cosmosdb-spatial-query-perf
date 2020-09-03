@@ -2,13 +2,14 @@ import os
 import sys
 import tempfile
 import uuid
+import json
 from pathlib import Path
 from geojsplit import geojsplit
 import geojson
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobClient, BlobServiceClient, ContainerClient
 
-sys.path.insert(1, './ProcessGeospatialAndQueryCosmosDB') # in vscode, the other .py files were not seen, normaly, this line should be omitted 
+sys.path.insert(1, './ProcessGeospatialAndQueryCosmosDB') # for usage in vscode, the other .py files are otherwise not seen 
 
 import constants
 from blob_manager import blob_manager
@@ -22,7 +23,27 @@ def split_geojson(in_geojson, out_path, n_features):
     :param n_features: Number of features to store per geojson
     """
 
-    geojsonData = geojsplit.GeoJSONBatchStreamer(in_geojson)
+    with open(in_geojson) as f:
+        data = json.load(f)
+
+    #for i in range(len(trip_id)):
+    #    data['features'][i]['properties']['id'] = trip_id[i]
+
+    #A Python dictionary containing properties to be added to each GeoJSON Feature
+    properties_dict={
+        "State": Path(in_geojson).stem
+        }
+
+    #Loop over GeoJSON features and add the new properties
+    for feat in data['features']: feat ['properties'].update(properties_dict)
+
+    # geojsplit needs a path; write to output file to local destination
+    outputFileStateName = os.path.join(out_path, Path(in_geojson).stem + ".geojson")
+    with open(outputFileStateName, 'w') as f:
+        geojson.dump(data, f)
+
+    #geojsonData = geojsplit.GeoJSONBatchStreamer(in_geojson)
+    geojsonData = geojsplit.GeoJSONBatchStreamer(outputFileStateName)
 
     i=1
     for feature_collection in geojsonData.stream(batch=n_features):
@@ -39,7 +60,7 @@ def split_geojson(in_geojson, out_path, n_features):
 bm = blob_manager(constants.blob_connection_str)
 
 in_geojson = sys.argv[1]
-#in_geojson = "Alaska.geojson"
+#in_geojson = "Hawaii.geojson"
 
 temp_path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
 local_file_path = os.path.join(temp_path, Path(in_geojson).stem)
@@ -47,6 +68,6 @@ os.makedirs(local_file_path)
 local_file_path_out = os.path.join(local_file_path, "split")
 os.makedirs(local_file_path_out)
 local_geojson_path = os.path.join(local_file_path, in_geojson)
-
+print(local_geojson_path)
 local_geojson_file = bm.download_file(local_geojson_path, 'footprints', os.path.join("statesunzip_example", in_geojson))
-split_geojson(local_geojson_file,local_file_path_out,10000)
+split_geojson(local_geojson_file,local_file_path_out,1)
