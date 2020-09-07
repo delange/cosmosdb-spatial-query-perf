@@ -40,28 +40,33 @@ def split_geojson(in_geojson, out_path, n_features):
         geojson.dump(data, f)
 
     # upload full state geojson, incl. dictionary Properties, to blob
-    bm.upload_file(outputFileStateName, 'footprints', os.path.join("statesgeojson/complete", os.path.basename(outputFileStateName)))
+    if not bm.blob_already_exists('footprints', os.path.join("statesgeojson/complete", os.path.basename(outputFileStateName))):
+        bm.upload_file(outputFileStateName, 'footprints', os.path.join("statesgeojson/complete", os.path.basename(outputFileStateName)))
     
     #geojsonData = geojsplit.GeoJSONBatchStreamer(in_geojson)
     geojsonData = geojsplit.GeoJSONBatchStreamer(outputFileStateName)
 
     i=1
     for feature_collection in geojsonData.stream(batch=n_features):
+        
         outputFile = os.path.join(out_path, Path(in_geojson).stem + str(i) + ".geojson")
-        # write to output file to local destination
-        with open(outputFile, 'w') as f:
-            geojson.dump(feature_collection, f) 
-        # upload output file to blob
-        bm.upload_file(outputFile, 'footprints', os.path.join("statesgeojson/split", Path(in_geojson).stem, os.path.basename(outputFile)))
-        os.remove(outputFile)
+        # check if blob already exists, if true, it wont upload
+        if not bm.blob_already_exists('footprints', os.path.join("statesgeojson/split", Path(in_geojson).stem, os.path.basename(outputFile))):
+            # write to output file to local destination
+            with open(outputFile, 'w') as f:
+                geojson.dump(feature_collection, f) 
+            # upload output file to blob
+            bm.upload_file(outputFile, 'footprints', os.path.join("statesgeojson/split", Path(in_geojson).stem, os.path.basename(outputFile)))
+            os.remove(outputFile)
+
         i=i+1
     return None
 
 # create blob connection
 bm = blob_manager(constants.blob_connection_str)
 
-in_geojson = sys.argv[1]
-#in_geojson = "Hawaii.geojson"
+#in_geojson = sys.argv[1]
+in_geojson = "DistrictofColumbia.geojson"
 
 temp_path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
 local_file_path = os.path.join(temp_path, Path(in_geojson).stem)
