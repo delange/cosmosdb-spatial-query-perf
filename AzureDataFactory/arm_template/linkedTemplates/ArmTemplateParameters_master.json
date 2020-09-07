@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "value": "geo-datafactory"
+        },
+        "AzureBlobStorage_Footprints_connectionString": {
+            "value": ""
+        },
+        "AzureBatchPoolDebian_accessKey": {
+            "value": ""
+        },
+        "AzureBatchD13_accessKey": {
+            "value": ""
+        },
+        "AzureBatchPoolDebian_properties_typeProperties_accountName": {
+            "value": "geoabatch"
+        },
+        "AzureBatchPoolDebian_properties_typeProperties_batchUri": {
+            "value": "https://geoabatch.westeurope.batch.azure.com"
+        },
+        "AzureBatchPoolDebian_properties_typeProperties_poolName": {
+            "value": "geobatchpooldebian"
+        },
+        "AzureBatchD13_properties_typeProperties_accountName": {
+            "value": "geoabatch"
+        },
+        "AzureBatchD13_properties_typeProperties_batchUri": {
+            "value": "https://geoabatch.westeurope.batch.azure.com"
+        },
+        "AzureBatchD13_properties_typeProperties_poolName": {
+            "value": "geobatchdebian_D13"
+        },
+        "containerUri": {
+            "value": ""
+        },
+        "containerSasToken": {
+            "value": ""
+        }
+    }
+}

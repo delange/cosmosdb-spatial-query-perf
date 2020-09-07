@@ -1,0 +1,523 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory name",
+            "defaultValue": "geo-datafactory"
+        },
+        "AzureBlobStorage_Footprints_connectionString": {
+            "type": "secureString",
+            "metadata": "Secure string for 'connectionString' of 'AzureBlobStorage_Footprints'"
+        },
+        "AzureBatchPoolDebian_accessKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accessKey' of 'AzureBatchPoolDebian'"
+        },
+        "AzureBatchD13_accessKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accessKey' of 'AzureBatchD13'"
+        },
+        "AzureBatchPoolDebian_properties_typeProperties_accountName": {
+            "type": "string",
+            "defaultValue": "geoabatch"
+        },
+        "AzureBatchPoolDebian_properties_typeProperties_batchUri": {
+            "type": "string",
+            "defaultValue": "https://geoabatch.westeurope.batch.azure.com"
+        },
+        "AzureBatchPoolDebian_properties_typeProperties_poolName": {
+            "type": "string",
+            "defaultValue": "geobatchpooldebian"
+        },
+        "AzureBatchD13_properties_typeProperties_accountName": {
+            "type": "string",
+            "defaultValue": "geoabatch"
+        },
+        "AzureBatchD13_properties_typeProperties_batchUri": {
+            "type": "string",
+            "defaultValue": "https://geoabatch.westeurope.batch.azure.com"
+        },
+        "AzureBatchD13_properties_typeProperties_poolName": {
+            "type": "string",
+            "defaultValue": "geobatchdebian_D13"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('factoryName'), '/AzureBlobStorage_Footprints')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureBlobStorage",
+                "typeProperties": {
+                    "connectionString": "[parameters('AzureBlobStorage_Footprints_connectionString')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ZipFiles')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "AzureBlobStorage_Footprints",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "Binary",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "folderPath": "stateszip",
+                        "container": "footprints"
+                    },
+                    "compression": {
+                        "type": "ZipDeflate",
+                        "level": "Optimal"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_Footprints')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/UnzipFiles')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "AzureBlobStorage_Footprints",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "Binary",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "folderPath": "statesunzip",
+                        "container": "footprints"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_Footprints')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/AzureBatchPoolDebian')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureBatch",
+                "typeProperties": {
+                    "accountName": "[parameters('AzureBatchPoolDebian_properties_typeProperties_accountName')]",
+                    "accessKey": {
+                        "type": "SecureString",
+                        "value": "[parameters('AzureBatchPoolDebian_accessKey')]"
+                    },
+                    "batchUri": "[parameters('AzureBatchPoolDebian_properties_typeProperties_batchUri')]",
+                    "poolName": "[parameters('AzureBatchPoolDebian_properties_typeProperties_poolName')]",
+                    "linkedServiceName": {
+                        "referenceName": "AzureBlobStorage_Footprints",
+                        "type": "LinkedServiceReference"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_Footprints')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/AzureBatchD13')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureBatch",
+                "typeProperties": {
+                    "accountName": "[parameters('AzureBatchD13_properties_typeProperties_accountName')]",
+                    "accessKey": {
+                        "type": "SecureString",
+                        "value": "[parameters('AzureBatchD13_accessKey')]"
+                    },
+                    "batchUri": "[parameters('AzureBatchD13_properties_typeProperties_batchUri')]",
+                    "poolName": "[parameters('AzureBatchD13_properties_typeProperties_poolName')]",
+                    "linkedServiceName": {
+                        "referenceName": "AzureBlobStorage_Footprints",
+                        "type": "LinkedServiceReference"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_Footprints')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/split-pipe')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "Batch Split",
+                        "type": "Custom",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "command": {
+                                "value": "@concat('python3 process_geojson_batch.py ', pipeline().parameters.filename)",
+                                "type": "Expression"
+                            },
+                            "resourceLinkedService": {
+                                "referenceName": "AzureBlobStorage_Footprints",
+                                "type": "LinkedServiceReference"
+                            },
+                            "folderPath": "input-batch",
+                            "referenceObjects": {
+                                "linkedServices": [],
+                                "datasets": []
+                            }
+                        },
+                        "linkedServiceName": {
+                            "referenceName": "AzureBatchPoolDebian",
+                            "type": "LinkedServiceReference"
+                        }
+                    }
+                ],
+                "parameters": {
+                    "filename": {
+                        "type": "string",
+                        "defaultValue": "@replace(item().name, '.zip', '.geojson')"
+                    }
+                },
+                "annotations": [],
+                "lastPublishTime": "2020-09-01T21:05:30Z"
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_Footprints')]",
+                "[concat(variables('factoryId'), '/linkedServices/AzureBatchPoolDebian')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/main-pipe_condenced')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "Get Metadata UnZip file list",
+                        "type": "GetMetadata",
+                        "dependsOn": [
+                            {
+                                "activity": "Copy data Zipped to Unzipped",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "dataset": {
+                                "referenceName": "UnzipFiles",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            },
+                            "fieldList": [
+                                "childItems"
+                            ],
+                            "storeSettings": {
+                                "type": "AzureBlobStorageReadSettings",
+                                "recursive": true
+                            },
+                            "formatSettings": {
+                                "type": "BinaryReadSettings"
+                            }
+                        }
+                    },
+                    {
+                        "name": "ForEach UnZip file",
+                        "type": "ForEach",
+                        "dependsOn": [
+                            {
+                                "activity": "Get Metadata UnZip file list",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "items": {
+                                "value": "@activity('Get Metadata UnZip file list').output.childItems",
+                                "type": "Expression"
+                            },
+                            "isSequential": false,
+                            "batchCount": 20,
+                            "activities": [
+                                {
+                                    "name": "Batch Split Geojson",
+                                    "type": "Custom",
+                                    "dependsOn": [],
+                                    "policy": {
+                                        "timeout": "7.00:00:00",
+                                        "retry": 0,
+                                        "retryIntervalInSeconds": 30,
+                                        "secureOutput": false,
+                                        "secureInput": false
+                                    },
+                                    "userProperties": [],
+                                    "typeProperties": {
+                                        "command": {
+                                            "value": "@concat('python3 process_geojson_batch.py ', replace(item().name, '.zip', '.geojson'))",
+                                            "type": "Expression"
+                                        },
+                                        "resourceLinkedService": {
+                                            "referenceName": "AzureBlobStorage_Footprints",
+                                            "type": "LinkedServiceReference"
+                                        },
+                                        "folderPath": "input-batch",
+                                        "referenceObjects": {
+                                            "linkedServices": [],
+                                            "datasets": []
+                                        }
+                                    },
+                                    "linkedServiceName": {
+                                        "referenceName": "AzureBatchD13",
+                                        "type": "LinkedServiceReference"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "Copy data Zipped to Unzipped",
+                        "type": "Copy",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "BinarySource",
+                                "storeSettings": {
+                                    "type": "AzureBlobStorageReadSettings",
+                                    "recursive": false,
+                                    "deleteFilesAfterCompletion": false
+                                },
+                                "formatSettings": {
+                                    "type": "BinaryReadSettings",
+                                    "compressionProperties": {
+                                        "type": "ZipDeflateReadSettings",
+                                        "preserveZipFileNameAsFolder": false
+                                    }
+                                }
+                            },
+                            "sink": {
+                                "type": "BinarySink",
+                                "storeSettings": {
+                                    "type": "AzureBlobStorageWriteSettings"
+                                }
+                            },
+                            "enableStaging": false
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "ZipFiles",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "UnzipFiles",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    }
+                ],
+                "annotations": [],
+                "lastPublishTime": "2020-09-04T09:01:28Z"
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/datasets/UnzipFiles')]",
+                "[concat(variables('factoryId'), '/datasets/ZipFiles')]",
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_Footprints')]",
+                "[concat(variables('factoryId'), '/linkedServices/AzureBatchD13')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/main-pipe')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "Get Metadata Zip file list",
+                        "type": "GetMetadata",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "dataset": {
+                                "referenceName": "ZipFiles",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            },
+                            "fieldList": [
+                                "childItems"
+                            ],
+                            "storeSettings": {
+                                "type": "AzureBlobStorageReadSettings",
+                                "recursive": true
+                            },
+                            "formatSettings": {
+                                "type": "BinaryReadSettings"
+                            }
+                        }
+                    },
+                    {
+                        "name": "ForEach Zip file",
+                        "type": "ForEach",
+                        "dependsOn": [
+                            {
+                                "activity": "Get Metadata Zip file list",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "userProperties": [],
+                        "typeProperties": {
+                            "items": {
+                                "value": "@activity('Get Metadata Zip file list').output.childItems",
+                                "type": "Expression"
+                            },
+                            "isSequential": true,
+                            "activities": [
+                                {
+                                    "name": "Copy data Zipped to Unzipped",
+                                    "type": "Copy",
+                                    "dependsOn": [],
+                                    "policy": {
+                                        "timeout": "7.00:00:00",
+                                        "retry": 0,
+                                        "retryIntervalInSeconds": 30,
+                                        "secureOutput": false,
+                                        "secureInput": false
+                                    },
+                                    "userProperties": [],
+                                    "typeProperties": {
+                                        "source": {
+                                            "type": "BinarySource",
+                                            "storeSettings": {
+                                                "type": "AzureBlobStorageReadSettings",
+                                                "recursive": false,
+                                                "deleteFilesAfterCompletion": false
+                                            },
+                                            "formatSettings": {
+                                                "type": "BinaryReadSettings",
+                                                "compressionProperties": {
+                                                    "type": "ZipDeflateReadSettings",
+                                                    "preserveZipFileNameAsFolder": false
+                                                }
+                                            }
+                                        },
+                                        "sink": {
+                                            "type": "BinarySink",
+                                            "storeSettings": {
+                                                "type": "AzureBlobStorageWriteSettings"
+                                            }
+                                        },
+                                        "enableStaging": false
+                                    },
+                                    "inputs": [
+                                        {
+                                            "referenceName": "ZipFiles",
+                                            "type": "DatasetReference",
+                                            "parameters": {}
+                                        }
+                                    ],
+                                    "outputs": [
+                                        {
+                                            "referenceName": "UnzipFiles",
+                                            "type": "DatasetReference",
+                                            "parameters": {}
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Execute Pipeline Split-pipe",
+                                    "type": "ExecutePipeline",
+                                    "dependsOn": [
+                                        {
+                                            "activity": "Copy data Zipped to Unzipped",
+                                            "dependencyConditions": [
+                                                "Completed"
+                                            ]
+                                        }
+                                    ],
+                                    "userProperties": [],
+                                    "typeProperties": {
+                                        "pipeline": {
+                                            "referenceName": "split-pipe",
+                                            "type": "PipelineReference"
+                                        },
+                                        "waitOnCompletion": false,
+                                        "parameters": {
+                                            "filename": {
+                                                "value": "@replace(item().name, '.zip', '.geojson')",
+                                                "type": "Expression"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "annotations": [],
+                "lastPublishTime": "2020-09-01T21:05:30Z"
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/datasets/ZipFiles')]",
+                "[concat(variables('factoryId'), '/datasets/UnzipFiles')]",
+                "[concat(variables('factoryId'), '/pipelines/split-pipe')]"
+            ]
+        }
+    ]
+}

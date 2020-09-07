@@ -1,0 +1,105 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory name",
+            "defaultValue": "geo-datafactory"
+        },
+        "AzureBlobStorage_Footprints_connectionString": {
+            "type": "secureString",
+            "metadata": "Secure string for 'connectionString' of 'AzureBlobStorage_Footprints'"
+        },
+        "AzureBatchPoolDebian_accessKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accessKey' of 'AzureBatchPoolDebian'"
+        },
+        "AzureBatchD13_accessKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accessKey' of 'AzureBatchD13'"
+        },
+        "AzureBatchPoolDebian_properties_typeProperties_accountName": {
+            "type": "string",
+            "defaultValue": "geoabatch"
+        },
+        "AzureBatchPoolDebian_properties_typeProperties_batchUri": {
+            "type": "string",
+            "defaultValue": "https://geoabatch.westeurope.batch.azure.com"
+        },
+        "AzureBatchPoolDebian_properties_typeProperties_poolName": {
+            "type": "string",
+            "defaultValue": "geobatchpooldebian"
+        },
+        "AzureBatchD13_properties_typeProperties_accountName": {
+            "type": "string",
+            "defaultValue": "geoabatch"
+        },
+        "AzureBatchD13_properties_typeProperties_batchUri": {
+            "type": "string",
+            "defaultValue": "https://geoabatch.westeurope.batch.azure.com"
+        },
+        "AzureBatchD13_properties_typeProperties_poolName": {
+            "type": "string",
+            "defaultValue": "geobatchdebian_D13"
+        },
+        "containerUri": {
+            "type": "string",
+            "metadata": "URI to storage account containing linked ARM templates"
+        },
+        "containerSasToken": {
+            "type": "string",
+            "metadata": "Sas token to storage account containing linked ARM templates"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "geo-datafactory_ArmTemplate_0",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-02-01",
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "factoryName": {
+                        "value": "[parameters('factoryName')]"
+                    },
+                    "AzureBlobStorage_Footprints_connectionString": {
+                        "value": "[parameters('AzureBlobStorage_Footprints_connectionString')]"
+                    },
+                    "AzureBatchPoolDebian_accessKey": {
+                        "value": "[parameters('AzureBatchPoolDebian_accessKey')]"
+                    },
+                    "AzureBatchD13_accessKey": {
+                        "value": "[parameters('AzureBatchD13_accessKey')]"
+                    },
+                    "AzureBatchPoolDebian_properties_typeProperties_accountName": {
+                        "value": "[parameters('AzureBatchPoolDebian_properties_typeProperties_accountName')]"
+                    },
+                    "AzureBatchPoolDebian_properties_typeProperties_batchUri": {
+                        "value": "[parameters('AzureBatchPoolDebian_properties_typeProperties_batchUri')]"
+                    },
+                    "AzureBatchPoolDebian_properties_typeProperties_poolName": {
+                        "value": "[parameters('AzureBatchPoolDebian_properties_typeProperties_poolName')]"
+                    },
+                    "AzureBatchD13_properties_typeProperties_accountName": {
+                        "value": "[parameters('AzureBatchD13_properties_typeProperties_accountName')]"
+                    },
+                    "AzureBatchD13_properties_typeProperties_batchUri": {
+                        "value": "[parameters('AzureBatchD13_properties_typeProperties_batchUri')]"
+                    },
+                    "AzureBatchD13_properties_typeProperties_poolName": {
+                        "value": "[parameters('AzureBatchD13_properties_typeProperties_poolName')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        }
+    ]
+}
