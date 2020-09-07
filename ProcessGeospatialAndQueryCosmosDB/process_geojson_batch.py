@@ -40,7 +40,7 @@ def split_geojson(in_geojson, out_path, n_features):
         geojson.dump(data, f)
 
     # upload full state geojson, incl. dictionary Properties, to blob
-    bm.upload_file(outputFileStateName, 'footprints', os.path.join("statesgeojson_example/complete", os.path.basename(outputFileStateName)))
+    bm.upload_file(outputFileStateName, 'footprints', os.path.join("statesgeojson/complete", os.path.basename(outputFileStateName)))
     
     #geojsonData = geojsplit.GeoJSONBatchStreamer(in_geojson)
     geojsonData = geojsplit.GeoJSONBatchStreamer(outputFileStateName)
@@ -52,7 +52,8 @@ def split_geojson(in_geojson, out_path, n_features):
         with open(outputFile, 'w') as f:
             geojson.dump(feature_collection, f) 
         # upload output file to blob
-        bm.upload_file(outputFile, 'footprints', os.path.join("statesgeojson_example/split", Path(in_geojson).stem, os.path.basename(outputFile)))
+        bm.upload_file(outputFile, 'footprints', os.path.join("statesgeojson/split", Path(in_geojson).stem, os.path.basename(outputFile)))
+        os.remove(outputFile)
         i=i+1
     return None
 
@@ -68,5 +69,5 @@ os.makedirs(local_file_path)
 local_file_path_out = os.path.join(local_file_path, "split")
 os.makedirs(local_file_path_out)
 local_geojson_path = os.path.join(local_file_path, in_geojson)
-local_geojson_file = bm.download_file(local_geojson_path, 'footprints', os.path.join("statesunzip_example", in_geojson))
+local_geojson_file = bm.download_file(local_geojson_path, 'footprints', os.path.join("statesunzip", in_geojson))
 split_geojson(local_geojson_file,local_file_path_out,1)
