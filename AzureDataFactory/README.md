@@ -1,9 +1,9 @@
 # Azure Data Factory pipelines
 
 Three pipelines are given:
-- main-pipe (for both experiments and common usage)
-- ingest to Cosmos DB from unzip (for common usage)
-- ingest to Cosmos DB from split (for experiments)
+- main-pipe : for both experiments and common usage
+- ingest to Cosmos DB from unzip : for common usage
+- ingest to Cosmos DB from split : for experiments
 
 ## main-pipe
 
