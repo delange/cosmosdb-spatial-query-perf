@@ -5,3 +5,15 @@
 - constants.py : specifies a few details from your Azure resources
 
 (- process_geojson.py : similar to process_geojson_batch.py but then a stand alone version, working away from Azure Batch)
+
+### Needed libraries
+- os
+- sys
+- tempfile
+- uuid
+- json
+- pathlib
+- [geojsplit](https://pypi.org/project/geojsplit/)
+- geojson
+- azure.core.exceptions
+- azure.storage.blob
