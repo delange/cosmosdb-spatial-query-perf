@@ -27,4 +27,9 @@ With the geospatial indexation and query capabilities, you are able to fastly ex
 
 ### The experiment set-up
 For the experiments that are described in blog post .. the need exists to control the number of geojson files to be ingested into Cosmos DB. We decided to split the large original geojson files into small files, each containing just 1 geospatial feature. In other words, we created milions of geojson files. With the approach we took, we were in theory able to have 50 concurrent processing streams, with the 50 US states and thus files. Still, this is a far slower process, so if you don't want to execute similar experiments, we recommend you to follow the approach given under 'Common usage pattern' above. 
+Splitting the files can be done through an Azure Batch approach, that we have embedded in an Azure Data Factory pipeline, that pipeline is explained [here](/AzureDataFactory/README.md), under the AzureDataFactory folder, and the Azure Batch code is given [here](/ProcessGeospatialAndQueryCosmosDB/README.md), under the ProcessGeospatialAndQueryCosmosDB folder.
+The geospatial performance tests were run on a VM with a C# application, explained [here](/PerformanceTests/README.md), under the PerformanceTests folder.
+
+
+
 
