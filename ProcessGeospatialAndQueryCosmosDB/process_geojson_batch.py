@@ -38,11 +38,12 @@ def split_geojson(in_geojson, out_path, n_features):
     outputFileStateName = os.path.join(out_path, Path(in_geojson).stem + ".geojson")
     with open(outputFileStateName, 'w') as f:
         geojson.dump(data, f)
+        f.close()
 
     # upload full state geojson, incl. dictionary Properties, to blob
-    if not bm.blob_already_exists('footprints', os.path.join("statesgeojson/complete", os.path.basename(outputFileStateName))):
-        bm.upload_file(outputFileStateName, 'footprints', os.path.join("statesgeojson/complete", os.path.basename(outputFileStateName)))
-    
+    #if not bm.blob_already_exists(Path(in_geojson.lower()).stem, os.path.join("complete", os.path.basename(outputFileStateName))):
+    bm.upload_file(outputFileStateName, Path(in_geojson.lower()).stem, os.path.join("complete", os.path.basename(outputFileStateName)))
+
     #geojsonData = geojsplit.GeoJSONBatchStreamer(in_geojson)
     geojsonData = geojsplit.GeoJSONBatchStreamer(outputFileStateName)
 
@@ -51,22 +52,23 @@ def split_geojson(in_geojson, out_path, n_features):
         
         outputFile = os.path.join(out_path, Path(in_geojson).stem + str(i) + ".geojson")
         # check if blob already exists, if true, it wont upload
-        if not bm.blob_already_exists('footprints', os.path.join("statesgeojson/split", Path(in_geojson).stem, os.path.basename(outputFile))):
+        #if not bm.blob_already_exists(Path(in_geojson.lower()).stem, os.path.join("split", os.path.basename(outputFile))):
+        if True:
             # write to output file to local destination
             with open(outputFile, 'w') as f:
                 geojson.dump(feature_collection, f) 
+                f.close()
             # upload output file to blob
-            bm.upload_file(outputFile, 'footprints', os.path.join("statesgeojson/split", Path(in_geojson).stem, os.path.basename(outputFile)))
+            bm.upload_file(outputFile, Path(in_geojson.lower()).stem, os.path.join("split", os.path.basename(outputFile)))
             os.remove(outputFile)
-
         i=i+1
     return None
 
 # create blob connection
 bm = blob_manager(constants.blob_connection_str)
 
-#in_geojson = sys.argv[1]
-in_geojson = "DistrictofColumbia.geojson"
+in_geojson = sys.argv[1]
+#in_geojson = "placeholder.geojson"
 
 temp_path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
 local_file_path = os.path.join(temp_path, Path(in_geojson).stem)
