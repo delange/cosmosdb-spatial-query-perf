@@ -1,3 +1,21 @@
+# Azure Data Factory pipelines
+
+Three pipelines are given:
+- main-pipe (for both experiments and common usage)
+- ingest to Cosmos DB from unzip (for common usage)
+- ingest to Cosmos DB from split (for experiments)
+
+## main-pipe
+
+
+## ingest to Cosmos DB from unzip
+
+
+## ingest to Cosmos DB from split
+
+
+
+
 # ADF implementation for loading geojson
 
 This folder contains an ADF-only implementation for loading featurs from a geojson file into CosmosDB. The geojson is split into individual features by a copy activity, and loaded as one feature per document. 
