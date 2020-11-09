@@ -19,6 +19,10 @@
             "type": "secureString",
             "metadata": "Secure string for 'accessKey' of 'AzureBatchD13'"
         },
+        "CosmosDb_footprints_split_connectionString": {
+            "type": "secureString",
+            "metadata": "Secure string for 'connectionString' of 'CosmosDb_footprints_split'"
+        },
         "AzureBatchPoolDebian_properties_typeProperties_accountName": {
             "type": "string",
             "defaultValue": "geoabatch"
@@ -72,6 +76,9 @@
                     },
                     "AzureBlobStorage_Footprints_connectionString": {
                         "value": "[parameters('AzureBlobStorage_Footprints_connectionString')]"
+                    },
+                    "CosmosDb_footprints_split_connectionString": {
+                        "value": "[parameters('CosmosDb_footprints_split_connectionString')]"
                     },
                     "AzureBatchPoolDebian_accessKey": {
                         "value": "[parameters('AzureBatchPoolDebian_accessKey')]"

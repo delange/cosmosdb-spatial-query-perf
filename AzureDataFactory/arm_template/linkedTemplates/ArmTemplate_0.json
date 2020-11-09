@@ -11,6 +11,10 @@
             "type": "secureString",
             "metadata": "Secure string for 'connectionString' of 'AzureBlobStorage_Footprints'"
         },
+        "CosmosDb_footprints_split_connectionString": {
+            "type": "secureString",
+            "metadata": "Secure string for 'connectionString' of 'CosmosDb_footprints_split'"
+        },
         "AzureBatchPoolDebian_accessKey": {
             "type": "secureString",
             "metadata": "Secure string for 'accessKey' of 'AzureBatchPoolDebian'"
@@ -57,6 +61,19 @@
                 "type": "AzureBlobStorage",
                 "typeProperties": {
                     "connectionString": "[parameters('AzureBlobStorage_Footprints_connectionString')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/CosmosDb_footprints_split')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "CosmosDb",
+                "typeProperties": {
+                    "connectionString": "[parameters('CosmosDb_footprints_split_connectionString')]"
                 }
             },
             "dependsOn": []
@@ -112,6 +129,113 @@
             ]
         },
         {
+            "name": "[concat(parameters('factoryName'), '/CosmosDbSqlApiCollection_footprint_unzip')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "CosmosDb_footprints_split",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "CosmosDbSqlApiCollection",
+                "schema": {},
+                "typeProperties": {
+                    "collectionName": "footprint_unzip"
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/CosmosDb_footprints_split')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/Json_unzip_alaska')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "AzureBlobStorage_Footprints",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "Json",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "fileName": "Alaska.geojson",
+                        "folderPath": "statesunzip",
+                        "container": "footprints"
+                    }
+                },
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string"
+                        },
+                        "features": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string"
+                                    },
+                                    "geometry": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string"
+                                            },
+                                            "coordinates": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "number"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "properties": {
+                                        "type": "object",
+                                        "properties": {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_Footprints')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/CosmosDbSqlApiCollection_analytics')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "CosmosDb_footprints_split",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "CosmosDbSqlApiCollection",
+                "schema": {},
+                "typeProperties": {
+                    "collectionName": "footprint_analytics"
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/CosmosDb_footprints_split')]"
+            ]
+        },
+        {
             "name": "[concat(parameters('factoryName'), '/AzureBatchPoolDebian')]",
             "type": "Microsoft.DataFactory/factories/linkedServices",
             "apiVersion": "2018-06-01",
@@ -162,60 +286,32 @@
             ]
         },
         {
-            "name": "[concat(parameters('factoryName'), '/split-pipe')]",
-            "type": "Microsoft.DataFactory/factories/pipelines",
+            "name": "[concat(parameters('factoryName'), '/Json_washington')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
             "apiVersion": "2018-06-01",
             "properties": {
-                "activities": [
-                    {
-                        "name": "Batch Split",
-                        "type": "Custom",
-                        "dependsOn": [],
-                        "policy": {
-                            "timeout": "7.00:00:00",
-                            "retry": 0,
-                            "retryIntervalInSeconds": 30,
-                            "secureOutput": false,
-                            "secureInput": false
-                        },
-                        "userProperties": [],
-                        "typeProperties": {
-                            "command": {
-                                "value": "@concat('python3 process_geojson_batch.py ', pipeline().parameters.filename)",
-                                "type": "Expression"
-                            },
-                            "resourceLinkedService": {
-                                "referenceName": "AzureBlobStorage_Footprints",
-                                "type": "LinkedServiceReference"
-                            },
-                            "folderPath": "input-batch",
-                            "referenceObjects": {
-                                "linkedServices": [],
-                                "datasets": []
-                            }
-                        },
-                        "linkedServiceName": {
-                            "referenceName": "AzureBatchPoolDebian",
-                            "type": "LinkedServiceReference"
-                        }
-                    }
-                ],
-                "parameters": {
-                    "filename": {
-                        "type": "string",
-                        "defaultValue": "@replace(item().name, '.zip', '.geojson')"
-                    }
+                "linkedServiceName": {
+                    "referenceName": "AzureBlobStorage_Footprints",
+                    "type": "LinkedServiceReference"
                 },
                 "annotations": [],
-                "lastPublishTime": "2020-09-01T21:05:30Z"
+                "type": "Json",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobStorageLocation",
+                        "fileName": "*.geojson",
+                        "folderPath": "split",
+                        "container": "washington"
+                    }
+                },
+                "schema": {}
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_Footprints')]",
-                "[concat(variables('factoryId'), '/linkedServices/AzureBatchPoolDebian')]"
+                "[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_Footprints')]"
             ]
         },
         {
-            "name": "[concat(parameters('factoryName'), '/main-pipe_condenced')]",
+            "name": "[concat(parameters('factoryName'), '/main-pipe')]",
             "type": "Microsoft.DataFactory/factories/pipelines",
             "apiVersion": "2018-06-01",
             "properties": {
@@ -274,8 +370,7 @@
                                 "value": "@activity('Get Metadata UnZip file list').output.childItems",
                                 "type": "Expression"
                             },
-                            "isSequential": false,
-                            "batchCount": 20,
+                            "isSequential": true,
                             "activities": [
                                 {
                                     "name": "Batch Split Geojson",
@@ -365,7 +460,7 @@
                     }
                 ],
                 "annotations": [],
-                "lastPublishTime": "2020-09-04T09:01:28Z"
+                "lastPublishTime": "2020-09-18T08:33:39Z"
             },
             "dependsOn": [
                 "[concat(variables('factoryId'), '/datasets/UnzipFiles')]",
@@ -375,14 +470,14 @@
             ]
         },
         {
-            "name": "[concat(parameters('factoryName'), '/main-pipe')]",
+            "name": "[concat(parameters('factoryName'), '/ingest to CosmosDB from unzip')]",
             "type": "Microsoft.DataFactory/factories/pipelines",
             "apiVersion": "2018-06-01",
             "properties": {
                 "activities": [
                     {
-                        "name": "Get Metadata Zip file list",
-                        "type": "GetMetadata",
+                        "name": "Copy data1",
+                        "type": "Copy",
                         "dependsOn": [],
                         "policy": {
                             "timeout": "7.00:00:00",
@@ -393,130 +488,191 @@
                         },
                         "userProperties": [],
                         "typeProperties": {
-                            "dataset": {
-                                "referenceName": "ZipFiles",
-                                "type": "DatasetReference",
-                                "parameters": {}
+                            "source": {
+                                "type": "JsonSource",
+                                "additionalColumns": [
+                                    {
+                                        "name": "filepath",
+                                        "value": "$$FILEPATH"
+                                    }
+                                ],
+                                "storeSettings": {
+                                    "type": "AzureBlobStorageReadSettings",
+                                    "recursive": true
+                                },
+                                "formatSettings": {
+                                    "type": "JsonReadSettings"
+                                }
                             },
-                            "fieldList": [
-                                "childItems"
-                            ],
-                            "storeSettings": {
-                                "type": "AzureBlobStorageReadSettings",
-                                "recursive": true
+                            "sink": {
+                                "type": "CosmosDbSqlApiSink",
+                                "writeBehavior": "upsert",
+                                "disableMetricsCollection": false
                             },
-                            "formatSettings": {
-                                "type": "BinaryReadSettings"
-                            }
-                        }
-                    },
-                    {
-                        "name": "ForEach Zip file",
-                        "type": "ForEach",
-                        "dependsOn": [
-                            {
-                                "activity": "Get Metadata Zip file list",
-                                "dependencyConditions": [
-                                    "Succeeded"
-                                ]
-                            }
-                        ],
-                        "userProperties": [],
-                        "typeProperties": {
-                            "items": {
-                                "value": "@activity('Get Metadata Zip file list').output.childItems",
-                                "type": "Expression"
-                            },
-                            "isSequential": true,
-                            "activities": [
-                                {
-                                    "name": "Copy data Zipped to Unzipped",
-                                    "type": "Copy",
-                                    "dependsOn": [],
-                                    "policy": {
-                                        "timeout": "7.00:00:00",
-                                        "retry": 0,
-                                        "retryIntervalInSeconds": 30,
-                                        "secureOutput": false,
-                                        "secureInput": false
-                                    },
-                                    "userProperties": [],
-                                    "typeProperties": {
+                            "enableStaging": false,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "mappings": [
+                                    {
                                         "source": {
-                                            "type": "BinarySource",
-                                            "storeSettings": {
-                                                "type": "AzureBlobStorageReadSettings",
-                                                "recursive": false,
-                                                "deleteFilesAfterCompletion": false
-                                            },
-                                            "formatSettings": {
-                                                "type": "BinaryReadSettings",
-                                                "compressionProperties": {
-                                                    "type": "ZipDeflateReadSettings",
-                                                    "preserveZipFileNameAsFolder": false
-                                                }
-                                            }
+                                            "path": "[['type']"
                                         },
                                         "sink": {
-                                            "type": "BinarySink",
-                                            "storeSettings": {
-                                                "type": "AzureBlobStorageWriteSettings"
-                                            }
-                                        },
-                                        "enableStaging": false
+                                            "path": "$['type']"
+                                        }
                                     },
-                                    "inputs": [
-                                        {
-                                            "referenceName": "ZipFiles",
-                                            "type": "DatasetReference",
-                                            "parameters": {}
-                                        }
-                                    ],
-                                    "outputs": [
-                                        {
-                                            "referenceName": "UnzipFiles",
-                                            "type": "DatasetReference",
-                                            "parameters": {}
-                                        }
-                                    ]
-                                },
-                                {
-                                    "name": "Execute Pipeline Split-pipe",
-                                    "type": "ExecutePipeline",
-                                    "dependsOn": [
-                                        {
-                                            "activity": "Copy data Zipped to Unzipped",
-                                            "dependencyConditions": [
-                                                "Completed"
-                                            ]
-                                        }
-                                    ],
-                                    "userProperties": [],
-                                    "typeProperties": {
-                                        "pipeline": {
-                                            "referenceName": "split-pipe",
-                                            "type": "PipelineReference"
+                                    {
+                                        "source": {
+                                            "path": "[['geometry']['type']"
                                         },
-                                        "waitOnCompletion": false,
-                                        "parameters": {
-                                            "filename": {
-                                                "value": "@replace(item().name, '.zip', '.geojson')",
-                                                "type": "Expression"
-                                            }
+                                        "sink": {
+                                            "path": "$['geometry']['type']"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "path": "[['geometry']['coordinates']"
+                                        },
+                                        "sink": {
+                                            "path": "$['geometry']['coordinates']"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "path": "$['filepath']"
+                                        },
+                                        "sink": {
+                                            "path": "$['properties']['state']"
                                         }
                                     }
-                                }
-                            ]
-                        }
+                                ],
+                                "collectionReference": "$['features']"
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "Json_unzip_alaska",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "CosmosDbSqlApiCollection_footprint_unzip",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
                     }
                 ],
                 "annotations": [],
-                "lastPublishTime": "2020-09-01T21:05:30Z"
+                "lastPublishTime": "2020-10-08T14:09:09Z"
             },
             "dependsOn": [
-                "[concat(variables('factoryId'), '/datasets/ZipFiles')]",
-                "[concat(variables('factoryId'), '/datasets/UnzipFiles')]",
-                "[concat(variables('factoryId'), '/pipelines/split-pipe')]"
+                "[concat(variables('factoryId'), '/datasets/Json_unzip_alaska')]",
+                "[concat(variables('factoryId'), '/datasets/CosmosDbSqlApiCollection_footprint_unzip')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/ingest to CosmosDB from split')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "Copy data1",
+                        "type": "Copy",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "7.00:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "source": {
+                                "type": "JsonSource",
+                                "storeSettings": {
+                                    "type": "AzureBlobStorageReadSettings",
+                                    "recursive": false,
+                                    "wildcardFolderPath": "split",
+                                    "wildcardFileName": "*.geojson"
+                                },
+                                "formatSettings": {
+                                    "type": "JsonReadSettings"
+                                }
+                            },
+                            "sink": {
+                                "type": "CosmosDbSqlApiSink",
+                                "writeBehavior": "upsert",
+                                "disableMetricsCollection": false
+                            },
+                            "enableStaging": false,
+                            "parallelCopies": 16,
+                            "dataIntegrationUnits": 32,
+                            "translator": {
+                                "type": "TabularTranslator",
+                                "mappings": [
+                                    {
+                                        "source": {
+                                            "path": "[['type']"
+                                        },
+                                        "sink": {
+                                            "path": "$['type']"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "path": "[['geometry']['type']"
+                                        },
+                                        "sink": {
+                                            "path": "$['geometry']['type']"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "path": "[['geometry']['coordinates']"
+                                        },
+                                        "sink": {
+                                            "path": "$['geometry']['coordinates']"
+                                        }
+                                    },
+                                    {
+                                        "source": {
+                                            "path": "[['properties']['State']"
+                                        },
+                                        "sink": {
+                                            "path": "$['properties']['state']"
+                                        }
+                                    }
+                                ],
+                                "collectionReference": "$['features']"
+                            }
+                        },
+                        "inputs": [
+                            {
+                                "referenceName": "Json_washington",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ],
+                        "outputs": [
+                            {
+                                "referenceName": "CosmosDbSqlApiCollection_analytics",
+                                "type": "DatasetReference",
+                                "parameters": {}
+                            }
+                        ]
+                    }
+                ],
+                "annotations": [],
+                "lastPublishTime": "2020-10-25T10:58:30Z"
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/datasets/Json_washington')]",
+                "[concat(variables('factoryId'), '/datasets/CosmosDbSqlApiCollection_analytics')]"
             ]
         }
     ]
