@@ -6,7 +6,7 @@ In this repository you will find the code and pipelines to run geospatial querie
 
 This repository is the technical back-bone from the .. blog post where the exeriments and the results are described.
 
-As input data for the experiments we make use of the US building footprints, that have been created through a deeplearning approach on aerial photos resulting in more than 100 milion building footprints. The source data can be found at: https://github.com/microsoft/USBuildingFootprints 
+As input data for the experiments we make use of the US building footprints, that have been created through a deeplearning approach on aerial photos resulting in around 125 milion building footprints. The source data can be found at: https://github.com/microsoft/USBuildingFootprints 
 
 ![Image of Project](/img/footprints.jpg)
 
@@ -22,5 +22,5 @@ Here, two approaches are presented:
 
 ### Common usage pattern
 
-
+With the geospatial indexation and query capabilities, you are able to fastly extract your geospatial feature from Cosmos DB, and hence enrich the data in an analytic engine, like the Azure Synapse Analytics Spark Pool. The ingestion of (zipped) geojson files, stored on Blob, into Cosmos DB can be achieved by a copy activity with Azure Data Factory, which is described [here](/AzureDataFactory/README.md). 
 
