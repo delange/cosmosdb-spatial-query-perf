@@ -27,6 +27,10 @@ In the Azure Resource Group used for this project, start the following services:
 - Azure Data Factory
 - Azure Batch (experimental branch only)
 
+  With Azure Batch, make use of Linux VMs. And use 'Set Tasks' in order to install python and the needed libraries on each VM in the pool (yellow):
+
+<img src="./img/Azure-batch.jpg" width=500px />
+
 
 #### Step 4
 In Azure Data Factory import the ARM templates provide in this folder. This will build up all 3 pipelines, and set the data sets. Adjust the activity settings to your naming convention of the resources.
