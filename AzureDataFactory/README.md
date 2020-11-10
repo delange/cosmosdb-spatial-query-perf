@@ -9,10 +9,15 @@ Three pipelines are given:
 
 
 ## main-pipe
-With the main pipe the zipped geojson will be unzipped, and each of the individual US state building footprint files (geojson) will be processed and split into small geojson files.
+With the main pipe the zipped geojson will be unzipped, and each of the individual US state building footprint files (geojson) will be processed and split into small geojson files. 
 
+Step 1: 
+Copy the State.zip from its [source](https://github.com/microsoft/USBuildingFootprints) to your blob container (with for example an ADF copy activity, or with Azure Storage Explorer). Here the container name 'footprints' has been used, place the zip files in a folder named 'stateszip'. 
+ 
  <img src="./img/blob_structure.jpg" width=500px />
 
+Step 2:
+Copy the 
 
 
 ## ingest to Cosmos DB from unzip
