@@ -1,9 +1,9 @@
 # Azure Data Factory pipelines
 
 Three pipelines are given:
-1) main-pipe : for both experiments and common usage
-2) ingest to Cosmos DB from unzip : for common usage
-3) ingest to Cosmos DB from split : for experiments
+..1) main-pipe : for both experiments and common usage
+..2) ingest to Cosmos DB from unzip : for common usage
+..3) ingest to Cosmos DB from split : for experiments
 
 ![Overview three pipelines](./img/Pipelines.jpg)
 
@@ -11,12 +11,12 @@ Three pipelines are given:
 ## main-pipe
 With the main pipe the zipped geojson will be unzipped, and each of the individual US state building footprint files (geojson) will be processed and split into small geojson files. 
 
-Step 1: 
+..Step 1: 
 Copy the State.zip from its [source](https://github.com/microsoft/USBuildingFootprints) to your blob container (with for example an ADF copy activity, or with Azure Storage Explorer). Here the container name 'footprints' has been used, place the zip files in a folder named 'stateszip'. 
  
  <img src="./img/blob_structure.jpg" width=500px />
 
-Step 2:
+..Step 2:
 Copy the 
 
 
