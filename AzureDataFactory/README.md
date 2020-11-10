@@ -11,13 +11,27 @@ Three pipelines are given:
 ## main-pipe
 With the main pipe the zipped geojson will be unzipped, and each of the individual US state building footprint files (geojson) will be processed and split into small geojson files. 
 
+
 #### Step 1
-Copy the State.zip from its [source](https://github.com/microsoft/USBuildingFootprints) to your blob container (with for example an ADF copy activity, or with Azure Storage Explorer). Here the container name 'footprints' has been used, place the zip files in a folder named 'stateszip'. 
+Copy the State.zip from its [source](https://github.com/microsoft/USBuildingFootprints) to your blob container (with for example an ADF copy activity, or with Azure Storage Explorer). Here the container name 'footprints' has been used, place the zip files in a folder named 'stateszip'. Best is to usa a separate Azure Resource Group for this project.
  
  <img src="./img/blob_structure.jpg" width=500px />
 
-#### Step 
-Copy the 
+
+#### Step 2
+Copy the [python scripts (3x)](./../ProcessGeospatialAndQueryCosmosDB/README.md) and put them in the folder named 'input-batch', in the footprints container.
+
+
+#### Step 3
+In the Azure Resource Group used for this project, start the following services:
+- Azure Data Factory
+- Azure Batch (experimental branch only)
+
+
+#### Step 4
+In Azure Data Factory import the ARM templates provide here. This will build up all 3 pipelines, and set the data sets. Adjust the activity settings to your naming convention of the resources.
+
+
 
 
 ## ingest to Cosmos DB from unzip
