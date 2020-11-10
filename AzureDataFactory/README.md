@@ -29,7 +29,13 @@ In the Azure Resource Group used for this project, start the following services:
 
 
 #### Step 4
-In Azure Data Factory import the ARM templates provide here. This will build up all 3 pipelines, and set the data sets. Adjust the activity settings to your naming convention of the resources.
+In Azure Data Factory import the ARM templates provide in this folder. This will build up all 3 pipelines, and set the data sets. Adjust the activity settings to your naming convention of the resources.
+
+
+#### Explained
+
+
+![Overview three pipelines](./img/pipe-main.jpg)
 
 
 
