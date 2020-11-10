@@ -8,7 +8,7 @@ Three pipelines are given:
 ![Overview three pipelines](./img/Pipelines.jpg)
 
 
-## main-pipe
+## 1. Main-pipe
 With the main pipe the zipped geojson will be unzipped, and each of the individual US state building footprint files (geojson) will be processed and split into small geojson files. 
 
 
@@ -48,22 +48,22 @@ The activity just copy the source files (zip) from blob to blob; simply from bin
 The second activity, concerns merely to get the list of geojson file names from /footprints/statesunzip/
 With the ChildItems set, within each iteration (third activity) the filename can be set to 
 
- <img src="./img/main-pipe-get-metadata.jpg" width=800px />
+ <img src="./img/main-pipe-get-metadata.jpg" width=600px />
 
 #### ForEach + Azure Batch
 The third activity iterates over the parsed list of geojson. Each childItem is set to Item (thus each individual state.geojson file can be refered to Item). You can check out the Sequential box in order to process states in parallel.
 
- <img src="./img/main-pipe-get-for-each1.jpg" width=800px />
+ <img src="./img/main-pipe-get-for-each1.jpg" width=600px />
 
 Within the ForEach activaty an Azure Batch activity will start.
 Here the reference to the python scripts can be made under folder path (red box), and the command to start the python script on the Azure Batch VM (linux).
 
- <img src="./img/main-pipe-azure-batch.jpg" width=800px />
+ <img src="./img/main-pipe-azure-batch.jpg" width=500px />
 
-## ingest to Cosmos DB from unzip
+## 2. Ingest to Cosmos DB from unzip
 
 
-## ingest to Cosmos DB from split
+## 3. Ingest to Cosmos DB from split
 
 
 
