@@ -36,29 +36,29 @@ In Azure Data Factory import the ARM templates provide in this folder. This will
 
 The pipeline exists of 3 activities, see below overview of the pipeline
 
-![Overview three pipelines](./img/pipe-main.jpg)
+ <img src="./img/pipe-main.jpg" width=800px />
 
 #### Copy activity
 The first activity is a copy activity, and this is the only part needed when using this pipeline for common usage (no Azure Batch). 
 The activity just copy the source files (zip) from blob to blob; simply from binary dataset source to binary dataset sink (no parameters needed). And by doing so making use of the baked in unzip feature - defined at the datasets level, see figure below (red):
 
-![Source datasets](./img/main-pipe-copy-source.jpg)
+ <img src="./img/main-pipe-copy-source" width=800px />
 
 #### Get Metadata
 The second activity, concerns merely to get the list of geojson file names from /footprints/statesunzip/
 With the ChildItems set, within each iteration (third activity) the filename can be set to 
 
-![Get Metadata](./img/main-pipe-get-metadata.jpg)
+ <img src="./img/main-pipe-get-metadata.jpg" width=800px />
 
 #### ForEach + Azure Batch
 The third activity iterates over the parsed list of geojson. Each childItem is set to Item (thus each individual state.geojson file can be refered to Item). You can check out the Sequential box in order to process states in parallel.
 
-![Set ChildItem](./img/main-pipe-get-for-each1.jpg)
+ <img src="./img/main-pipe-get-for-each1" width=800px />
 
 Within the ForEach activaty an Azure Batch activity will start.
 Here the reference to the python scripts can be made under folder path (red box), and the command to start the python script on the Azure Batch VM (linux).
 
-![Azure Batch](./img/main-pipe-get-azure-batch.jpg)
+ <img src="./img/main-pipe-get-azure-batch.jpg" width=800px />
 
 ## ingest to Cosmos DB from unzip
 
@@ -84,7 +84,7 @@ In the output, these are mapped to:
 - properties.state
 - properties.partitionKey
 
-  <img src="./img/mapping.jpg" width=500px />
+  <img src="./img/mapping.jpg" width=500px class="center" />
 
 
 The [pipeline](./pipeline) folder contains a simple pipeline that holds only the single copy activity. This assumes that the geojson has already been unzipped and stored in blobstore as a geojson file in a separate copy activity step. 
