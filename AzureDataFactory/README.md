@@ -5,12 +5,13 @@ Three pipelines are given:
 2) ingest to Cosmos DB from unzip : for common usage
 3) ingest to Cosmos DB from split : for experiments
 
-[]
+![Overview three pipelines](/img/Pipelines.jpg)
 
 
 ## main-pipe
 With the main pipe the zipped geojson will be unzipped, and each of the individual US state building footprint files (geojson) will be processed and split into small geojson files.
 
+![Blob containers](/img/blob_structure.jpg)
 
 
 ## ingest to Cosmos DB from unzip
