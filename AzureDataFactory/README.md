@@ -11,7 +11,8 @@ Three pipelines are given:
 ## main-pipe
 With the main pipe the zipped geojson will be unzipped, and each of the individual US state building footprint files (geojson) will be processed and split into small geojson files.
 
-![Blob containers](./img/blob_structure.jpg)
+ <img src="./img/blob_structure.jpg" width=500px />
+
 
 
 ## ingest to Cosmos DB from unzip
