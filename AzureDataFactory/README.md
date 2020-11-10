@@ -1,11 +1,16 @@
 # Azure Data Factory pipelines
 
 Three pipelines are given:
-- main-pipe : for both experiments and common usage
-- ingest to Cosmos DB from unzip : for common usage
-- ingest to Cosmos DB from split : for experiments
+1) main-pipe : for both experiments and common usage
+2) ingest to Cosmos DB from unzip : for common usage
+3) ingest to Cosmos DB from split : for experiments
+
+[]
+
 
 ## main-pipe
+With the main pipe the zipped geojson will be unzipped, and each of the individual US state building footprint files (geojson) will be processed and split into small geojson files.
+
 
 
 ## ingest to Cosmos DB from unzip
