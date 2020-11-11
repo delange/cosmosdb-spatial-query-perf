@@ -63,41 +63,58 @@ Within the ForEach activaty an Azure Batch activity will start.
 Here the reference to the python scripts can be made under folder path (red box), and the command to start the python script on the Azure Batch VM (linux).
 
  <img src="./img/main-pipe-azure-batch.jpg" width=500px />
+ 
 
 ## 2. Ingest to Cosmos DB from unzip
+
+To load directly data from the unzipped source files (type geojson) from blob to CosmosDB, use the 'ingest to Cosmos DB from unzip' ADF pipeline. The geojson is split into individual features by a copy activity, and loaded as one feature per document. 
+
+### Copy Activity
+
+The activity adds one property into each feature, to provide candidates for use as a partition key:
+- filename of source geojson
+
+
+  <img src="./img/pipe-unzip-source.jpg" width=600px />
+
+In the output, the filename is mapped to: 
+- properties.state
+
+  <img src="./img/pipe-unzip-mapping.jpg" width=500px class="center" />
+
+
+Note that this pipeline assumes that the geojson has already been unzipped and stored in blobstore as a geojson file in a separate copy activity step (see the copy activity in the 'main-pipe' above). 
+
+The source dataset is a hardcoded pointer to a specfic file - this could be paramterised in the pipeline.
+
+The sink (here the dataset CosmosDbSqlApiCollection_footprints_unzip) is a Cosmos DB with an existing database called `footprints_split` and a container called `footprint_unzip`. The partition key must be set to  `/properties/state`.
+
+> **Note: This sample is not optimised or throttled for copy performance. Suggest scaling up RU's and turning off indexing in Cosmos DB for the initial import.**
+
+After the ingestion of all features, the Cosmos DB container can be [indexed by geography](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-geospatial-index#geography-data-indexing-examples):
+
+<img src="./img/pipe-unzip-cosmosdb.jpg" width=500px class="center" />
 
 
 ## 3. Ingest to Cosmos DB from split
 
-
-
-
-# ADF implementation for loading geojson
-
-This folder contains an ADF-only implementation for loading featurs from a geojson file into CosmosDB. The geojson is split into individual features by a copy activity, and loaded as one feature per document. 
+To load data from the split files (results from the main-pipe) from blob to CosmosDB, use the 'ingest to Cosmos DB from split' ADF pipeline. The geojson files are split into individual features and has already the propertie State assigned during the main-pipe. The copy activity is thus to load the data as one feature per document. 
 
 ### Copy Activity
 
-The activity adds two properties into each feature, to provide candidates for use as a partition key:
-- filename of source geojson
-- guid (generated, same value for all features in the file)
+The activity makes use of a wildcard reference to the source files (\*.geojson):
 
-  <img src="./img/source-config.jpg" width=500px />
+  <img src="./img/pipe-split-source.jpg" width=600px />
 
-In the output, these are mapped to: 
+In the output, the existing properties.State is mapped to: 
 - properties.state
-- properties.partitionKey
 
-  <img src="./img/mapping.jpg" width=500px class="center" />
-
-
-The [pipeline](./pipeline) folder contains a simple pipeline that holds only the single copy activity. This assumes that the geojson has already been unzipped and stored in blobstore as a geojson file in a separate copy activity step. 
-
-The [source dataset](./dataset/geojson.json) is a hardcoded pointer to a specfic file - this could be paramterised in the pipeline.
-
-The [sink](./dataset/CosmosDbSqlApiCollection1.json) is a Cosmos DB with an existing database called `geojson` and a container called `features`. The partition key must be set to either `/properties/partitionKey` or `/properties/state`.
-
-> **Note: This sample is not optimised or throttled for copy performance. Suggest scaling up RU's and turning off indexing in Cosmos DB for the initial import.**
+  <img src="./img/pipe-split-mapping.jpg" width=500px class="center" />
 
 
+The sink (here the dataset CosmosDbSqlApiCollection_analytics) is a Cosmos DB with an existing database called `footprints_split` and a container called `footprint_analtyics`. The partition key must be set to  `/properties/state`.
+
+> **Note: This sample is not optimised or throttled for copy performance. Suggest scaling up RU's and turning off indexing in Cosmos DB for the initial import, and with the copy activity increase the degree of copy parallism (under settings).**
+
+After the ingestion of all features, the Cosmos DB container can be [indexed by geography](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-query-geospatial-index#geography-data-indexing-examples) (see example figure under 2. Ingest to Cosmos DB from unzip
 
