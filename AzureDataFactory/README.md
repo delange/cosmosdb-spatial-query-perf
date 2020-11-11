@@ -37,6 +37,10 @@ In the Azure Resource Group used for this project, start the following services:
 In Azure Data Factory import the ARM templates provide in this folder: use the 'Build your own template in the editor' and load the arm_template.json, if the file does not load, just paste the content in the editor. Hit save, and provide the credential details for the services already provisioned in step 3. This will build up all 3 pipelines, and set the data sets. Adjust the activity settings to your naming convention of the resources.
 
 
+#### Step 5
+If you use this pipeline only for common usage (no Azure Batch), remove the Get Metadata and the ForEach activities (Copy activity remaining).
+
+
 #### Pipe explained
 
 The pipeline exists of 3 activities, see below overview of the pipeline
