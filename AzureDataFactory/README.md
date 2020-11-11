@@ -80,7 +80,7 @@ The activity adds one property into each feature, to provide candidates for use 
 In the output, the filename is mapped to: 
 - properties.state
 
-  <img src="./img/pipe-unzip-mapping.jpg" width=500px class="center" />
+  <img src="./img/pipe-unzip-mapping.jpg" width=600px class="center" />
 
 
 Note that this pipeline assumes that the geojson has already been unzipped and stored in blobstore as a geojson file in a separate copy activity step (see the copy activity in the 'main-pipe' above). 
@@ -109,7 +109,7 @@ The activity makes use of a wildcard reference to the source files (\*.geojson):
 In the output, the existing properties.State is mapped to: 
 - properties.state
 
-  <img src="./img/pipe-split-mapping.jpg" width=500px class="center" />
+  <img src="./img/pipe-split-mapping.jpg" width=600px class="center" />
 
 
 The sink (here the dataset CosmosDbSqlApiCollection_analytics) is a Cosmos DB with an existing database called `footprints_split` and a container called `footprint_analtyics`. The partition key must be set to  `/properties/state`.
