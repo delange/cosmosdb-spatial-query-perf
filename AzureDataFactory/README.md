@@ -104,7 +104,7 @@ To load data from the split files (results from the main-pipe) from blob to Cosm
 
 The activity makes use of a wildcard reference to the source files (\*.geojson):
 
-  <img src="./img/pipe-split-source.jpg" width=600px />
+  <img src="./img/pipe-split-source.jpg" width=700px />
 
 In the output, the existing properties.State is mapped to: 
 - properties.state
