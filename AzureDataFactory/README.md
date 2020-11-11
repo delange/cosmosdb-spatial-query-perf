@@ -19,7 +19,7 @@ Copy the State.zip from its [source](https://github.com/microsoft/USBuildingFoot
 
 
 #### Step 2
-Copy the [python scripts (3x)](./../ProcessGeospatialAndQueryCosmosDB/README.md) and put them in the folder named 'input-batch', in the footprints container.
+Copy the [python scripts (3x)](./../ProcessGeospatialAndQueryCosmosDB) and put them in the folder named 'input-batch', in the footprints container.
 
 
 #### Step 3
