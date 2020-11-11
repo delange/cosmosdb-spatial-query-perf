@@ -22,7 +22,7 @@ Here, two approaches are presented:
 
 ### Common usage pattern
 
-With the geospatial indexation and query capabilities, you are able to fastly extract your geospatial feature from Cosmos DB, and hence enrich the data in an analytic engine, like the Azure Synapse Analytics Spark Pool. The ingestion of (zipped) geojson files, stored on Blob, into Cosmos DB can be achieved by a copy activity with Azure Data Factory, which is described [here](/AzureDataFactory), under the AzureDataFactory folder. An example of big geospatial data analytics is given [here](/Synapse), under the Synapse folder.
+With the geospatial indexation and query capabilities, you are able to fastly extract your geospatial feature from Cosmos DB, and hence enrich the data in an analytic engine, like the Azure Synapse Analytics Spark Pool. The ingestion of (zipped) geojson files, stored on Blob, into Cosmos DB can be achieved by a copy activity with Azure Data Factory, which is described [here](/AzureDataFactory), under the AzureDataFactory folder. An example of big geospatial data analytics is given [here](/AzureSynapseAnalytics), under the Synapse folder.
 
 
 ### The experiment set-up
