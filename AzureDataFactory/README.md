@@ -25,6 +25,7 @@ Copy the [python scripts (3x)](./../ProcessGeospatialAndQueryCosmosDB) and put t
 #### Step 3
 In the Azure Resource Group used for this project, start the following services:
 - Azure Data Factory
+- Azure Cosmos DB
 - Azure Batch (experimental branch only)
 
   With Azure Batch, make use of Linux VMs. And use 'Set Tasks' in order to install python and the needed libraries on each VM in the pool (yellow):
@@ -33,7 +34,7 @@ In the Azure Resource Group used for this project, start the following services:
 
 
 #### Step 4
-In Azure Data Factory import the ARM templates provide in this folder. This will build up all 3 pipelines, and set the data sets. Adjust the activity settings to your naming convention of the resources.
+In Azure Data Factory import the ARM templates provide in this folder: use the 'Build your own template in the editor' and load the arm_template.json, if the file does not load, just paste the content in the editor. Hit save, and provide the credential details for the services already provisioned in step 3. This will build up all 3 pipelines, and set the data sets. Adjust the activity settings to your naming convention of the resources.
 
 
 #### Pipe explained
