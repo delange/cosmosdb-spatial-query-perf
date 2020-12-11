@@ -10,3 +10,5 @@ Then, from the Development tab, the provided notebook can be imported:
 
 Alternatively, you can start a new notebook and it load your data already as dataframe:
 
+<img src="./img/synapse_load_dataframe.jpg" width=500px />
+
