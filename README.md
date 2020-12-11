@@ -11,7 +11,7 @@ As input data for the experiments we make use of the US building footprints, tha
 ![Image of Project](./img/footprints.jpg)
 
 
-### General set-up
+## General set-up
 
 Here, two approaches are presented:
 - the common usage pattern: direct data ingestion into CosmosDB and usage from Azure Synapse Analytics
@@ -20,7 +20,7 @@ Here, two approaches are presented:
 ![Set-up of Project](./img/Architecture.jpg)
 
 
-### Common usage pattern
+## Common usage pattern
 
 With the geospatial indexation and query capabilities, you are able to fastly extract your geospatial feature from Cosmos DB, and hence enrich the data in an analytic engine, like the Azure Synapse Analytics Spark Pool. 
 
@@ -33,7 +33,7 @@ The ingestion of (zipped) geojson files, stored on Blob, into Cosmos DB can be a
 An example of big geospatial data analytics is given [here](/AzureSynapseAnalytics), under the Synapse folder.
 
 
-### The experiment set-up
+## The experiment set-up
 For the experiments that are described in blog post .. the need exists to control the number of geojson files to be ingested into Cosmos DB. We decided to split the large original geojson files into small files, each containing just 1 geospatial feature. In other words, we created milions of geojson files. With the approach we took, we were in theory able to have 50 concurrent processing streams, with the 50 US states and thus files. Still, this is a far slower process, so if you don't want to execute similar experiments, we recommend you to follow the approach given under 'Common usage pattern' above. 
 
 #### Data preprocessing pipeline
