@@ -24,23 +24,28 @@ Here, two approaches are presented:
 
 With the geospatial indexation and query capabilities, you are able to fastly extract your geospatial feature from Cosmos DB, and hence enrich the data in an analytic engine, like the Azure Synapse Analytics Spark Pool. 
 
-* Data ingestion / [](/AzureSynapseAnalytics)
+#### Data ingestion
+
 The ingestion of (zipped) geojson files, stored on Blob, into Cosmos DB can be achieved by a copy activity with Azure Data Factory, which is described [here](/AzureDataFactory), under the AzureDataFactory folder. 
 
-* Data analytics and enrichment
+#### Data analytics and enrichment
+
 An example of big geospatial data analytics is given [here](/AzureSynapseAnalytics), under the Synapse folder.
 
 
 ### The experiment set-up
 For the experiments that are described in blog post .. the need exists to control the number of geojson files to be ingested into Cosmos DB. We decided to split the large original geojson files into small files, each containing just 1 geospatial feature. In other words, we created milions of geojson files. With the approach we took, we were in theory able to have 50 concurrent processing streams, with the 50 US states and thus files. Still, this is a far slower process, so if you don't want to execute similar experiments, we recommend you to follow the approach given under 'Common usage pattern' above. 
 
-* Data preprocessing pipeline
+#### Data preprocessing pipeline
+
 Splitting the files can be done through an Azure Batch approach, that we have embedded in an Azure Data Factory pipeline, that pipeline is explained [here](/AzureDataFactory), under the AzureDataFactory folder.
 
-* Data preprocessing code
+#### Data preprocessing code
+
 The Azure Batch code is given [here](/ProcessGeospatialAndQueryCosmosDB), under the ProcessGeospatialAndQueryCosmosDB folder.
 
-* Query performance tests
+#### Query performance tests
+
 The geospatial performance tests were run on a VM with a C# application, explained [here](/PerformanceTests), under the PerformanceTests folder.
 
 
