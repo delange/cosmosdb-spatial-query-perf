@@ -4,8 +4,9 @@ In the Synapse Studio, Data tab, of Azure Synapse Analytics one can create a dir
 
 <img src="./img/synapse_direct_link.jpg" width=500px />
 
-Then, from the Development tab, the here provided note book can be imported:
+Then, from the Development tab, the provided notebook can be imported:
 
+<img src="./img/synapse_import_notebook.jpg" width=500px />
 
+Alternatively, you can start a new notebook and it load your data already as dataframe:
 
-<img src="./imgsynapse_import_notebook.jpg" width=500px />
