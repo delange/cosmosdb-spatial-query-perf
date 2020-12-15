@@ -4,4 +4,4 @@ Geospatial performance tests can be done with the c# application. It can be conn
 
 Within the app, the three tests can be called, see the following example:
 
-<img src="./img/performance_app.jpg" width=500px />
+<img src="./img/performance_app.jpg" width=1000px />
